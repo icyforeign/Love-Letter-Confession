@@ -1,1 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Pixel Love Letter</title>
 
+<style>
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: #070914;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: "Courier New", monospace;
+  overflow: hidden;
+  color: white;
+}
+
+.pixel-text {
+  font-family: "Courier New", monospace;
+  font-weight: 900;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-shadow: 3px 3px 0 #000;
+}
+
+.signal {
+  position: absolute;
+  top: 25px;
+  width: 230px;
+  height: 160px;
+  background: #e8d600;
+  border: 6px solid #111;
+  box-shadow: 0 0 0 6px #e8d60055, 0 0 35px #e8d600;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.initials {
+  position: absolute;
+  top: 145px;
+  color: #111;
+  font-size: 22px;
+  z-index: 5;
+}
+
+.pixel-art {
+  display: grid;
+  gap: 0;
+  image-rendering: pixelated;
+}
+
+.px {
+  width: var(--s);
+  height: var(--s);
+}
+
+.scene {
+  text-align: center;
+  z-index: 20;
+  margin-top: 150px;
+}
+
+.letter {
+  width: 315px;
+  height: 215px;
+  background: #121826;
+  border: 8px solid #e8d600;
+  box-shadow: 10px 10px 0 #000;
+  position: relative;
+  cursor: pointer;
+}
+
+.letter:before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(135deg, transparent 48%, #e8d600 49%, #e8d600 52%, transparent 53%),
+    linear-gradient(225deg, transparent 48%, #e8d600 49%, #e8d600 52%, transparent 53%);
+}
+
+.heart-seal {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -40%);
+  z-index: 3;
+}
+
+.click {
+  margin-top: 18px;
+  color: #ffd6e8;
+  font-size: 15px;
+}
+
+.message {
+  display: none;
+  width: 320px;
+  background: #121826;
+  border: 8px solid #e8d600;
+  box-shadow: 10px 10px 0 #000;
+  padding: 26px;
+  color: #ffd6e8;
+  font-size: 18px;
+  line-height: 1.8;
+}
+
+.message h1 {
+  color: #e8d600;
+  font-size: 20px;
+}
+
+.joint {
+  position: absolute;
+  z-index: 8;
+}
+
+.j1 { left: 20px; top: 250px; transform: scale(.8) rotate(-20deg); }
+.j2 { right: 20px; top: 275px; transform: scale(.8) rotate(18deg); }
+.j3 { right: 80px; bottom: 125px; transform: scale(.7) rotate(-15deg); }
+
+.kitten {
+  position: absolute;
+  z-index: 8;
+  animation: float 2s infinite ease-in-out;
+}
+
+.k1 { left: 20px; bottom: 75px; transform: scale(.75); }
+.k2 { right: 20px; bottom: 75px; transform: scale(.75); animation-delay: .4s; }
+
+@keyframes float {
+  0%,100% { translate: 0 0; }
+  50% { translate: 0 -10px; }
+}
+
+.star {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: white;
+  box-shadow: 8px 0 white, -8px 0 white, 0 8px white, 0 -8px white;
+}
+
+.s1 { top: 90px; left: 40px; }
+.s2 { top: 190px; right: 50px; }
+.s3 { bottom: 180px; left: 55px; }
+
+.ground {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 65px;
+  background: #020617;
+  border-top: 8px solid #e8d600;
+}
+</style>
+</head>
+
+<body>
+
+<div class="signal">
+  <div id="bat"></div>
+</div>
+
+<div class="initials pixel-text">И + Е</div>
+
+<div class="star s1"></div>
+<div class="star s2"></div>
+<div class="star s3"></div>
+
+<div id="joint1" class="joint j1"></div>
+<div id="joint2" class="joint j2"></div>
+<div id="joint3" class="joint j3"></div>
+
+<div id="kitten1" class="kitten k1"></div>
+<div id="kitten2" class="kitten k2"></div>
+
+<div class="scene">
+  <div class="letter" id="letter">
+    <div id="heart" class="heart-seal"></div>
+  </div>
+
+  <div class="message pixel-text" id="message">
+    <h1>FOR YOU</h1>
+    <p>
+      I'M SORRY.<br>
+      I MISS YOU.<br>
+      AND I LOVE YOU.
+    </p>
+    <p>
+      LOVE,<br>
+      ICYFOREIGN
+    </p>
+  </div>
+
+  <div class="click pixel-text" id="clickText">CLICK THE PINK HEART</div>
+</div>
+
+<div class="ground"></div>
+
+<script>
+function draw(id, matrix, colors, size) {
+  const el = document.getElementById(id);
+  el.className += " pixel-art";
+  el.style.gridTemplateColumns = `repeat(${matrix[0].length}, ${size}px)`;
+  el.style.setProperty("--s", size + "px");
+
+  matrix.forEach(row => {
+    [...row].forEach(cell => {
+      const p = document.createElement("div");
+      p.className = "px";
+      p.style.background = colors[cell] || "transparent";
+      el.appendChild(p);
+    });
+  });
+}
+
+const bat = [
+"000000000000000000000",
+"111111110000011111111",
+"011111111100111111110",
+"001111111111111111100",
+"000111111111111111000",
+"000111111111111111000",
+"000011111111111110000",
+"000001111111111100000",
+"000000111111111000000",
+"000000011111110000000",
+"000000001111100000000",
+"000000000111000000000",
+"000000000010000000000"
+];
+
+const joint = [
+"000000000001111000000",
+"000000000111111110000",
+"000000011122222111000",
+"000001112222221110000",
+"000111222222111000000",
+"011122222111000000000",
+"112222211000000000000",
+"222221100000000000000",
+"222110000000000000000",
+"011000000000000000000",
+"300000000000000000000",
+"300000000000000000000",
+"000000000000000000000",
+"000040000000000000000",
+"000004000000000000000",
+"000000400000000000000"
+];
+
+const heart = [
+"0001100011000",
+"0014410144100",
+"0144441444410",
+"1444444444441",
+"1444444444441",
+"0144444444410",
+"0014444444100",
+"0001444441000",
+"0000144410000",
+"0000014100000"
+];
+
+const kitten = [
+"000110000011000",
+"001331000133100",
+"013333111333310",
+"013333333333310",
+"013355333553310",
+"013333333333310",
+"001333666333100",
+"000133333331000",
+"001111111111100",
+"011222222222110",
+"012222222222210",
+"012222222222210",
+"001220000221000",
+"001220000221000"
+];
+
+draw("bat", bat, {
+  "1": "#202020"
+}, 9);
+
+draw("joint1", joint, {
+  "1": "#7a3f00",
+  "2": "#9a5a00",
+  "3": "#b91c1c",
+  "4": "#9ca3af"
+}, 7);
+
+draw("joint2", joint, {
+  "1": "#7a3f00",
+  "2": "#9a5a00",
+  "3": "#b91c1c",
+  "4": "#9ca3af"
+}, 7);
+
+draw("joint3", joint, {
+  "1": "#7a3f00",
+  "2": "#9a5a00",
+  "3": "#b91c1c",
+  "4": "#9ca3af"
+}, 7);
+
+draw("heart", heart, {
+  "1": "#000000",
+  "4": "#ffb6d5"
+}, 6);
+
+draw("kitten1", kitten, {
+  "1": "#111111",
+  "2": "#f1d7b5",
+  "3": "#3b2f2f",
+  "5": "#93c5fd",
+  "6": "#c08457"
+}, 6);
+
+draw("kitten2", kitten, {
+  "1": "#111111",
+  "2": "#f1d7b5",
+  "3": "#3b2f2f",
+  "5": "#93c5fd",
+  "6": "#c08457"
+}, 6);
+
+const letter = document.getElementById("letter");
+const message = document.getElementById("message");
+const clickText = document.getElementById("clickText");
+
+letter.addEventListener("click", () => {
+  letter.style.display = "none";
+  message.style.display = "block";
+  clickText.textContent = "И + Е";
+});
+</script>
+
+</body>
+</html>
